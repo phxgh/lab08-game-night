@@ -34,6 +34,35 @@ int leadIdx = LeaderIndex(pointsArray);
 Console.WriteLine($"Leader: {playerArray[leadIdx]} with {pointsArray[leadIdx]}");
 Console.WriteLine($"Season total: {TotalPoints(pointsArray)}\n\n");
 
+// Part 2: Game Night
+int bestScore = 0;
+string bestPlayer = "";
+// for: since we're using the index across playerArray and pointsArray
+for (int i = 0; i < playerArray.Length; i++)
+{
+    Console.Write($"Points tonight for {playerArray[i]}: ");
+    int tonight = -1;
+    // while: because we want this to run UNTIL a certain condition is met
+    while (tonight < 0 || tonight > MAX_POINTS)
+    {
+        tonight = Convert.ToInt32(Console.ReadLine());
+        if (tonight >= 0 && tonight <= MAX_POINTS)
+            break;
+        Console.WriteLine($"Points must be from 0 to {MAX_POINTS}.");
+        Console.Write($"Points tonight for {playerArray[i]}: ");
+    }
+    if (tonight > bestScore)
+    {
+        bestScore = tonight;
+        bestPlayer = playerArray[i];
+    }
+    int season = Convert.ToInt32(pointsArray[i]) + tonight;
+    pointsArray[i] = season.ToString();
+}
+Console.WriteLine($"Tonight's winner: {bestPlayer} with {bestScore}\n\n");
+File.WriteAllLines(POINTS_FILE, pointsArray);
+Console.WriteLine($"Saved {POINTS_FILE}.");
+
 // Methods
 static int LeaderIndex(string[] points)
 {
