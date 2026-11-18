@@ -1,5 +1,12 @@
-﻿using System;
-using System.Drawing;
+﻿/*
+* Name: Phoenix Rojas
+* Course: CSCI 1250, Section 001
+* Assignment: Lab 08, Game Night
+* Date: November 18, 2026
+* Description: Keeps a game night leaderboard in three text files. Shows the
+* season so far, records tonight's points, saves the new totals,
+* and adds tonight's result to a history that grows every week.
+*/
 
 const string PLAYERS_FILE = "players.txt";
 const string POINTS_FILE = "points.txt";
@@ -15,23 +22,10 @@ Directory.SetCurrentDirectory(projectFolder);
 
 string[] playerArray = File.ReadAllLines(PLAYERS_FILE);
 string[] pointsArray = File.ReadAllLines(POINTS_FILE);
-string[] historyArray = File.ReadAllLines(HISTORY_FILE);
-
-Console.WriteLine("=== GAME NIGHT LEADERBOARD ===");
-// (part of) Part 3: The History
-if (historyArray.Length <= 0)
-{
-    Console.WriteLine("No nights played yet.");
-}
-foreach (string entry in historyArray)
-{
-    Console.WriteLine($"\t{entry}");
-}
-int night = historyArray.Length + 1;
-Console.WriteLine($"Tonight is night {night}\n\n");
 
 // Part 1: The Standings
 Console.WriteLine("\n\nPLAYER".PadRight(PAD_LENGTH) + " POINTS");
+// for: since we're using the index across playerArray and pointsArray
 for (int i = 0; i < playerArray.Length; i++)
 {
     Console.WriteLine($"{playerArray[i].PadRight(PAD_LENGTH)} {pointsArray[i]}");
@@ -40,43 +34,12 @@ int leadIdx = LeaderIndex(pointsArray);
 Console.WriteLine($"Leader: {playerArray[leadIdx]} with {pointsArray[leadIdx]}");
 Console.WriteLine($"Season total: {TotalPoints(pointsArray)}\n\n");
 
-// Part 2: Game Night
-int bestScore = 0;
-string bestPlayer = "";
-for (int i = 0; i < playerArray.Length; i++)
-{
-    Console.Write($"Points tonight for {playerArray[i]}: ");
-    int tonight = -1;
-    while (tonight < 0 || tonight > MAX_POINTS)
-    {
-        tonight = Convert.ToInt32(Console.ReadLine());
-        if (tonight >= 0 && tonight <= MAX_POINTS)
-            break;
-        Console.WriteLine($"Points must be from 0 to {MAX_POINTS}.");
-        Console.Write($"Points tonight for {playerArray[i]}: ");
-    }
-    if (tonight > bestScore)
-    {
-        bestScore = tonight;
-        bestPlayer = playerArray[i];
-    }
-    int season = Convert.ToInt32(pointsArray[i]) + tonight;
-    pointsArray[i] = season.ToString();
-}
-Console.WriteLine($"Tonight's winner: {bestPlayer} with {bestScore}\n\n");
-File.WriteAllLines(POINTS_FILE, pointsArray);
-Console.WriteLine($"Saved {POINTS_FILE}.");
-
-// Part 3: The History
-string latestEntry = HistoryEntry(night, bestPlayer, bestScore);
-File.AppendAllLines(HISTORY_FILE, new string[1] {latestEntry});
-Console.WriteLine($"Added to {HISTORY_FILE}: {latestEntry}");
-
 // Methods
 static int LeaderIndex(string[] points)
 {
     int index = 0;
     int highest = 0;
+    // for: since we're returning the index, it needs to be tracked
     for (int i = 0; i < points.Length; i++)
     {
         int value = Convert.ToInt32(points[i]);
@@ -92,6 +55,7 @@ static int LeaderIndex(string[] points)
 static int TotalPoints(string[] points)
 {
     int sum = 0;
+    // foreach: since only the values of the array are counted
     foreach (string str in points)
     {
         int value = Convert.ToInt32(str);
