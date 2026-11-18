@@ -22,6 +22,22 @@ Directory.SetCurrentDirectory(projectFolder);
 
 string[] playerArray = File.ReadAllLines(PLAYERS_FILE);
 string[] pointsArray = File.ReadAllLines(POINTS_FILE);
+string[] historyArray = File.ReadAllLines(HISTORY_FILE);
+
+Console.WriteLine("=== GAME NIGHT LEADERBOARD ===");
+// (part of) Part 3: The History
+if (historyArray.Length <= 0)
+{
+    Console.WriteLine("No nights played yet.");
+}
+// foreach: since only the entries of the history need to be grabbed
+// we're not doing anything with any indexes
+foreach (string entry in historyArray)
+{
+    Console.WriteLine($"\t{entry}");
+}
+int night = historyArray.Length + 1;
+Console.WriteLine($"Tonight is night {night}\n\n");
 
 // Part 1: The Standings
 Console.WriteLine("\n\nPLAYER".PadRight(PAD_LENGTH) + " POINTS");
@@ -62,6 +78,11 @@ for (int i = 0; i < playerArray.Length; i++)
 Console.WriteLine($"Tonight's winner: {bestPlayer} with {bestScore}\n\n");
 File.WriteAllLines(POINTS_FILE, pointsArray);
 Console.WriteLine($"Saved {POINTS_FILE}.");
+
+// Part 3: The History
+string latestEntry = HistoryEntry(night, bestPlayer, bestScore);
+File.AppendAllLines(HISTORY_FILE, new string[1] {latestEntry});
+Console.WriteLine($"Added to {HISTORY_FILE}: {latestEntry}");
 
 // Methods
 static int LeaderIndex(string[] points)
